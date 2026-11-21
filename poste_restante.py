@@ -933,6 +933,10 @@ class Game:
             self.say("Everything here is in order now.")
         if r in ("counter", "postmaster"):
             self.desk_note()
+        here = [d["names"][0] for d in st["docs"].values() if d["room"] == r and not d["gone"]]
+        extras = {"counter": ["ledger", "bell"], "cabinet": ["mail"] if st.get("mail") else []}.get(r, [])
+        if here or extras:
+            self.say("To read here: " + ", ".join(f"`read {n}`" for n in here + extras) + ".")
         if r == "cabinet":
             n = len(_load(HELD, []))
             self.say(f"{cap(NUMWORD[n]) if n < 10 else n} other door{'s' if n != 1 else ''} hold{'s' if n == 1 else ''} letters waiting for other clerks." if n else "",
@@ -1078,7 +1082,9 @@ class Game:
         if r == "counter":
             return self.deliver(text.lower().replace("to ", "", 1).strip())
         if not key:
-            return self.say("Nothing here is waiting for an answer.")
+            return self.say("Nothing here is waiting for an answer. Questions wait in the Postmark Room, at the Sorting Hall's "
+                            "table and on the Returns Desk; the torn letter wants `order`, the drawer wants `dial`, and the "
+                            "letter in your hand is delivered from the Counter.")
         if key in st["solved"]:
             return self.say("That's already done. The stamp is on your letter.")
         if not text.strip():
@@ -1101,7 +1107,7 @@ class Game:
     def order(self, names):
         st = self.st
         if st["room"] != "mending":
-            return self.say("There's nothing to put in order here.")
+            return self.say("The torn letter is on the Mending Table (west of the Counter). `order` works there.")
         if "mending" in st["solved"]:
             return self.say("The letter is already mended.")
         m = st["puzzles"]["mending"]
@@ -1119,7 +1125,7 @@ class Game:
     def dial(self, digits):
         st = self.st
         if st["room"] != "postmaster":
-            return self.say("There's nothing to dial here.")
+            return self.say("The combination drawer is in the Postmaster's Office (east of the Counter). `dial` works there.")
         if "drawer" in st["solved"]:
             return self.say("The drawer is already open.")
         if len(digits) != 3:

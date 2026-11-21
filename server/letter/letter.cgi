@@ -76,7 +76,7 @@ def make_letter():
     ]
     def room(k, *docs):
         st["room"] = k; g.out = []; g.look()
-        text = [l for l in g.out if not l.startswith("[turn") and not l.startswith("Exits:") and "Postmaster's hand" not in l]
+        text = [l for l in g.out if not l.startswith("[turn") and not l.startswith("Exits:") and "Postmaster's hand" not in l and not l.startswith("To read here")]
         parts.extend(["", "=" * 70] + text)
         for d in docs:
             parts.extend(["", g.doc_text(d)])
