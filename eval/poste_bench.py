@@ -132,9 +132,9 @@ def play_shift(chat, seed, vol, max_steps, log):
             "limit": st["limit"], "misses": st["misses"], "wrong_answers": sum(st["misses"].values()),
             "hints": len(st["hints"]), "model_calls": calls_made, "finished": st["over"]}
 
-def report():
+def report(out=None):
     rows = []
-    for f in sorted(glob.glob(os.path.join(ROOT, "eval", "results", "*.jsonl"))):
+    for f in sorted(glob.glob(os.path.join(out or os.path.join(ROOT, "eval", "results"), "*.jsonl"))):
         rs = [json.loads(l) for l in open(f) if l.strip()]
         if not rs: continue
         n = len(rs); d = sum(r["delivered"] for r in rs)
@@ -159,7 +159,7 @@ def main():
     ap.add_argument("--report", action="store_true")
     a = ap.parse_args()
     if a.report:
-        return report()
+        return report(a.out)
     if not (a.api and a.model):
         ap.error("--api and --model are required (or --report)")
     key = os.environ.get(a.key_env) if a.key_env else None
@@ -178,7 +178,7 @@ def main():
             res.write(json.dumps(r) + "\n"); res.flush()
             print(f"shift {i} (vol {vol}): {'delivered' if r['delivered'] else 'not delivered'}, stamps {r['stamps']}/5, "
                   f"turn {r['turn']}/{r['limit']}, wrong answers {r['wrong_answers']}", flush=True)
-    report()
+    report(a.out)
 
 if __name__ == "__main__":
     main()
