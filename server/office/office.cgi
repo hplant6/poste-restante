@@ -89,6 +89,10 @@ def clean_letter(l, kind):
             return None, "empty letter"
     return out, None
 
+def hmac_eq(a, b):
+    import hmac
+    return hmac.compare_digest(a.encode(), b.encode())
+
 def fragments():
     return load("undeliverable.json", [])
 
@@ -158,6 +162,18 @@ def main():
                 return reply({"index": None, "fragment": None, "restored": total, "total": total})
             st["restored"] = i + 1; dump("state.json", st)
             return reply({"index": i, "fragment": fragments()[i]["text"], "restored": i + 1, "total": total})
+        if act in ("mod_list", "mod_delete"):
+            tok = load("admin_token.json", None)
+            if not tok or not isinstance(req.get("token"), str) or not hmac_eq(req["token"], tok):
+                return reply({"error": "not allowed"}, "403 Forbidden")
+            if act == "mod_list":
+                return reply({"mail": load("mail.json", []), "held": load("held.json", [])})
+            nid = req.get("id"); gone = 0
+            for kind in ("mail", "held"):
+                box = load(kind + ".json", []); keep = [l for l in box if l.get("id") != nid]
+                gone += len(box) - len(keep)
+                if len(keep) != len(box): dump(kind + ".json", keep)
+            return reply({"ok": True, "removed": gone})
         return reply({"error": "unknown action"}, "400 Bad Request")
 
 if __name__ == "__main__":

@@ -1431,8 +1431,30 @@ def default_vol():
     wins = sum(1 for e in load_ledger() if e.get("won"))
     return min(3, 1 + wins)
 
+def moderate(args):
+    """Owner-only: `moderate list` or `moderate delete <id>`. Needs ~/.config/poste-restante/admin_token."""
+    try:
+        tok = open(os.path.expanduser("~/.config/poste-restante/admin_token")).read().strip()
+    except OSError:
+        return "No admin token on this machine (~/.config/poste-restante/admin_token)."
+    if args[:1] == ["list"]:
+        r = office({"action": "mod_list", "token": tok})
+        if not r or "mail" not in r:
+            return f"Couldn't list: {r}"
+        lines = []
+        for kind in ("mail", "held"):
+            for l in r[kind]:
+                lines.append(f"[{kind} #{l['id']}] {l['date']} from {l['from']} for {cond_text(tuple(l['cond']))}: {l.get('text') or l.get('note') or '(no note)'}")
+        return "\n".join(lines) or "The office holds no letters."
+    if args[:1] == ["delete"] and len(args) == 2 and args[1].isdigit():
+        r = office({"action": "mod_delete", "token": tok, "id": int(args[1])})
+        return f"Removed {r.get('removed', 0)} letter(s)." if r and r.get("ok") else f"Couldn't delete: {r}"
+    return "Usage: moderate list | moderate delete <id>"
+
 def run(argv):
     text = " ".join(argv).strip()
+    if text.startswith("moderate"):
+        return moderate(text.split()[1:])
     st = load_state()
     out = []
     m = re.match(r"^new\b(.*)$", text)
