@@ -1,0 +1,5 @@
+Options +ExecCGI -Indexes
+AddHandler cgi-script .cgi
+<Files "poste_restante.py">
+  Require all denied
+</Files>

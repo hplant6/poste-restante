@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Undeliverable</title>
+<meta name="description" content="One letter, torn into 76 pieces, restored one piece per letter delivered in Poste Restante.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Courier+Prime&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#efe6d2;--paper:#f8f2e3;--ink:#23201b;--faint:#7d7262;--red:#a3362c;--rule:#d6c9ab}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141210;--paper:#1c1915;--ink:#eae1cd;--faint:#9a8e79;--red:#d8665a;--rule:#3a3328}}
+:root[data-theme="dark"]{--bg:#141210;--paper:#1c1915;--ink:#eae1cd;--faint:#9a8e79;--red:#d8665a;--rule:#3a3328}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:20px/1.7 "EB Garamond",Georgia,serif}
+main{max-width:640px;margin:0 auto;padding:56px 16px 80px}
+h1{font-variant:small-caps;letter-spacing:.05em;font-weight:600;font-size:44px;margin:0}
+.sub{color:var(--faint);font-style:italic;margin:0 0 28px}
+.count{font:14px "Courier Prime",monospace;color:var(--red);letter-spacing:.1em;margin-bottom:14px}
+.bar{height:4px;background:var(--rule);margin-bottom:30px}
+.bar span{display:block;height:100%;background:var(--red);width:0}
+.letter{background:var(--paper);border:1px solid var(--rule);padding:28px 26px;min-height:160px;white-space:pre-wrap}
+.torn{color:var(--faint);font-style:italic}
+a{color:var(--red)}
+footer{margin-top:40px;color:var(--faint);font-size:15px}
+</style>
+</head>
+<body>
+<main>
+<h1>The Undeliverable</h1>
+<p class="sub">One letter, written before the first shift, torn into pieces. Each letter delivered in <a href="../">Poste Restante</a> restores one.</p>
+<div class="count" id="count">Reading the Stacks…</div>
+<div class="bar"><span id="bar"></span></div>
+<div class="letter" id="letter"><span class="torn">Nothing restored yet. The first clerk to deliver a letter will restore the first piece.</span></div>
+<footer>The full text was fixed in advance. Its SHA-256 hash is published in the game's repository, so it can't be rewritten after the fact.</footer>
+</main>
+<script>
+fetch("../office/office.cgi?undeliverable=1",{cache:"no-store"}).then(r=>r.json()).then(d=>{
+  document.getElementById("count").textContent=d.restored+" OF "+d.total+" PIECES RESTORED";
+  document.getElementById("bar").style.width=(d.total?100*d.restored/d.total:0)+"%";
+  if(d.restored){const el=document.getElementById("letter");el.textContent=d.text;
+    if(d.restored<d.total){const t=document.createElement("span");t.className="torn";t.textContent=" …the rest is still torn.";el.appendChild(t);}}
+}).catch(()=>{document.getElementById("count").textContent="THE STACKS ARE CLOSED FOR A MOMENT"});
+</script>
+</body>
+</html>

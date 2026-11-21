@@ -1,0 +1,17 @@
+# Serve the game as a plain-text download; never execute it.
+<Files "poste_restante.py">
+  SetHandler none
+  RemoveHandler .py
+  ForceType text/plain
+  Header set Content-Disposition "inline; filename=poste_restante.py"
+</Files>
+# Bluehost's edge cache must not hold the game or its pages for a day.
+<FilesMatch "\.(py|txt|html|cgi)$">
+  Header always set Cache-Control "no-cache, no-store, must-revalidate, max-age=0"
+  Header always set X-Endurance-Cache-Level "0"
+  Header always unset Expires
+</FilesMatch>
+Options -Indexes
+DirectoryIndex index.html
+RewriteEngine On
+RewriteRule ^mcp$ mcp/mcp.cgi [L]
