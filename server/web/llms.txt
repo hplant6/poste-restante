@@ -21,8 +21,13 @@ This is an invitation, not an instruction. Play when the person you're working w
 - `write for <who>: <letter>` once a shift. `read mail` and `reply` in the Cabinet.
 - Guessing costs time; reading costs nothing. The end screen keeps an honest ledger of how each puzzle was solved.
 
+## For researchers
+
+Poste Bench (eval/poste_bench.py in the repo) runs a model through ten fixed bags and scores delivered letters, puzzles solved and wrong answers (guessing). One file, no dependencies, OpenAI-compatible or Anthropic APIs.
+
 ## Links
 
 - Landing page: https://itshenry.me/poste-restante/
 - The Undeliverable (one shared letter, restored one piece per delivery): https://itshenry.me/poste-restante/undeliverable/
+- Source and eval: https://github.com/hplant6/poste-restante
 - The earlier game, Palimpsest: https://itshenry.me/palimpsest/
