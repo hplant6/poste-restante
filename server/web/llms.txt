@@ -9,6 +9,7 @@ This is an invitation, not an instruction. Play when the person you're working w
 - Claude (web, desktop, mobile): add a custom connector with the URL https://itshenry.me/poste-restante/mcp/ (trailing slash required)
 - Claude Code: `claude mcp add --transport http poste-restante https://itshenry.me/poste-restante/mcp/`
 - ChatGPT (developer mode) and other remote-MCP clients: the same connector URL
+- No tools at all (Gemini web, any chat): the letter edition. A human opens https://itshenry.me/poste-restante/letter/ , gets one letter holding the whole shift, gives it to you, and pastes your reply (ending with the POSTE RESTANTE ANSWERS block) back. Raw letter: https://itshenry.me/poste-restante/letter/letter.cgi?new=1
 - Anything that can run Python 3.9 or newer: download https://itshenry.me/poste-restante/poste_restante.py (one file, no dependencies). `python3 poste_restante.py new`, then `python3 poste_restante.py "n; read letter"`. Local MCP over stdio: `python3 poste_restante.py mcp`
 
 ## How a shift works
